@@ -1,0 +1,76 @@
+unmanaged implementation in class zbp_cit_hdr_22107 unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZCI_DH107 alias SalesOrderHdr
+implementation in class zbp_cit_22107 unique
+draft table zcit_hdr_d
+lock master total etag LastChangedAt
+authorization master ( instance )
+etag master LocalLastChangedAt
+{
+  create ( authorization : global );
+  update;
+  delete;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  field ( readonly : update ) SalesDocument;
+  field ( readonly ) LocalCreatedAt, LocalCreatedBy, LocalLastChangedAt, LocalLastChangedBy, LastChangedAt;
+
+  // CRITICAL: This name must match your Item CDS View exactly
+  association _salesitem { create; with draft; }
+
+  mapping for zci_dh_107
+  {
+    SalesDocument      = sales_order;
+    SalesDocumentType  = order_type;
+    SalesOrganization  = sales_org;
+    DistributionChannel = dist_channel;
+    Division           = division;
+    Customer           = customer;
+    OverallStatus      = overall_status;
+    LocalCreatedBy     = created_by;
+    LocalCreatedAt     = created_at;
+    LocalLastChangedBy = last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt      = last_changed_at;
+  }
+}
+
+// CRITICAL: Changed from ZCI_IINT_107 to ZCI_DII107 to match your CDS
+define behavior for ZCI_DII107 alias SalesOrderItm
+implementation in class zbp_cit_itm_22107 unique
+draft table zcit_itm1
+lock dependent by _salesHeader
+authorization dependent by _salesHeader
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+
+  field ( readonly : update ) SalesDocument, SalesItemnumber;
+  field ( readonly ) LocalCreatedAt, LocalCreatedBy, LocalLastChangedAt, LocalLastChangedBy, LastChangedAt;
+
+  association _salesHeader { with draft; }
+
+  mapping for zci_dii_107
+  {
+    SalesDocument      = sales_order;
+    SalesItemnumber    = sales_order_item;
+    Material           = material;
+    Plant              = plant;
+    StorageLocation    = storage_location;
+    Quantity           = requested_qty;
+    Quantityunits      = requested_unit;
+    LocalCreatedBy     = local_created_by;
+    LocalCreatedAt     = local_created_at;
+    LocalLastChangedBy = local_last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt      = last_changed_at;
+  }
+}

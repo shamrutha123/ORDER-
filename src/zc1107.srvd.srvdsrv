@@ -1,0 +1,5 @@
+@EndUserText.label: 'Service definition'
+define service ZC1107 {
+  expose ZC1_107;
+  expose ZCI_1_107;
+}
